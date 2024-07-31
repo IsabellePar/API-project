@@ -17,9 +17,9 @@ formRef.addEventListener("submit", async (event) => {
   event.preventDefault();
   let text = event.target.searchInput.value;
   console.log(text);
-  let test = await countryFetch(text);
-  console.log(test);
-  cardMaker(test);
+  let data = await countryFetch(text);
+  cardMaker(data);
+  event.target.searchInput.value = "";
 });
 
 function cardMaker(data) {
