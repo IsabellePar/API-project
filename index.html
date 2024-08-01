@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=
-    , initial-scale=1.0"
+      content="width=device-width, initial-scale=1.0"
     />
     <link rel="stylesheet" href="style.css">
     <title>API Project</title>
@@ -20,11 +19,21 @@
         <button id="searchBtn" type="submit">Search</button>
       </form>
 
-      <section id="searchResults">
- 
+        <section class="modal">
+          <section class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+
+          </section>
+        </section>
+
+      <section id="searchResults"></section>
+      
+      <section class="favorites">
+        <h3>Favorites</h3>
+        <section class="favorite-content"></section>
       </section>
   </main>
-
     <script src="script.js" defer></script>
   </body>
 </html>
