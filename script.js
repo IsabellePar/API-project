@@ -39,42 +39,43 @@ function cardMaker(data) {
     searchResults.appendChild(card);
   });
 
-   // Add event listeners for the cards to show modal on click
-   let allCards = document.querySelectorAll(".card");
-   allCards.forEach((card) => {
-     card.addEventListener("click", (e) => {
+  // Add event listeners for the cards to show modal on click
+  let allCards = document.querySelectorAll(".card");
+  allCards.forEach((card) => {
+    card.addEventListener("click", (e) => {
       showModal(data[e.currentTarget.id]);
-     });
-   });
+    });
+  });
 }
 
-
-async function fetchAll(){
+async function fetchAll() {
   let response = await fetch("https://restcountries.com/v3.1/all");
   let data = await response.json();
 
   //random numbers
-  let shuffled = data.sort(function(){ return 0.5 - Math.random() });
-  let selected = shuffled.slice(0,4);
+  let shuffled = data.sort(function () {
+    return 0.5 - Math.random();
+  });
+  let selected = shuffled.slice(0, 4);
 
   return selected;
 }
 
-async function callOnLoad(){
+async function callOnLoad() {
   let countries = await fetchAll();
   cardMaker(countries);
 }
 
 window.addEventListener("load", () => {
   callOnLoad();
-   displayFavorites();
-} );
+  displayFavorites();
+});
 
 //#region MODAL
 function showModal(countryData) {
   let modal = document.querySelector(".modal");
   let modalContent = document.querySelector("#modalContent");
- 
+
   modalContent.innerHTML = `
     <figure>
       <img src="${
@@ -93,50 +94,63 @@ function showModal(countryData) {
           : "N/A"
       }</p>
     </div>
-   <button class="favoriteBtn"> Add to favorites </button>
   `;
 
-  
-  let favoriteCountries = JSON.parse(localStorage.getItem('favoriteCountries')) || [];
-  let favBtn = document.querySelector(".favoriteBtn");
-  favBtn.addEventListener("click", () => {
-    favoriteCountries.push(countryData);
-    localStorage.setItem("favoriteCountries", JSON.stringify(favoriteCountries));
-    displayFavorites();
-  });
+  let favoriteCountries =
+    JSON.parse(localStorage.getItem("favoriteCountries")) || [];
+
+  // Check if the country is already in favorites
+  let isFavorite = favoriteCountries.some(
+    (favoriteCountry) =>
+      JSON.stringify(favoriteCountry) === JSON.stringify(countryData)
+  );
+
+  // Only add the favorite button if the country isn't in the list
+  if (!isFavorite) {
+    let favBtn = document.createElement("button");
+    favBtn.classList.add("favoriteBtn");
+    favBtn.textContent = "Add to favorites";
+    favBtn.addEventListener("click", () => {
+      favoriteCountries.push(countryData);
+      localStorage.setItem(
+        "favoriteCountries",
+        JSON.stringify(favoriteCountries)
+      );
+      displayFavorites();
+    });
+
+    modalContent.appendChild(favBtn);
+  }
+
   modal.style.display = "block";
 
   let span = document.querySelector(".close");
   span.addEventListener("click", () => {
     modal.style.display = "none";
     modal.style.zIndex = -1;
-    
-  })
-  
+  });
+
   window.addEventListener("click", (event) => {
     if (event.target == modal) {
       modal.style.display = "none";
     }
   });
-  
 }
 
-//#endregion 
-
+//#endregion
 
 function displayFavorites() {
-  let favoritesRef = document.querySelector('.favorite-content');
+  let favoritesRef = document.querySelector(".favorite-content");
   favoritesRef.innerHTML = "";
-  let favorites = JSON.parse(localStorage.getItem('favoriteCountries')) || [];
+  let favorites = JSON.parse(localStorage.getItem("favoriteCountries")) || [];
   favorites.forEach((country, index) => {
     favoritesRef.innerHTML += `<img id=${index} class="favorite" src=${country.flags.png}></img>`;
-  })
+  });
 
   let allFavs = document.querySelectorAll(".favorite");
   allFavs.forEach((fav) => {
     fav.addEventListener("click", (e) => {
-     showModal(favorites[e.currentTarget.id]);
+      showModal(favorites[e.currentTarget.id]);
     });
   });
-  
 }
